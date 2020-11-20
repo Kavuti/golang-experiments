@@ -1,0 +1,16 @@
+version: '3'
+services:
+  golang:
+    build: .
+    links:
+      - "postgres"
+  postgres:
+    image: postgres:13.1-alpine
+    environment:
+      POSTGRES_PASSWORD: "go-pass"
+    volumes:
+      - "./postgres/postgres.conf:/usr/local/etc/postgres/postgres.conf"
+      - "./postgres/data:/var/lib/postgresql/data:delegated"
+    command: "postgres -c config_file=/usr/local/etc/postgres/postgres.conf"
+    ports: 
+      - "5432:5432"
