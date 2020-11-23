@@ -1,49 +1,42 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
-	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
-type User struct {
-	Name     string
-	Surname  string
-	Username string
-	Password string
-}
+// const (
+// 	host     = "ec2-54-247-181-232.eu-west-1.compute.amazonaws.com"
+// 	port     = 5432
+// 	user     = "ypekdohkmvmcew"
+// 	password = "8acf4f708538c87049c3ab7b34b1a57583753910c690f23f798db96c1313141c"
+// 	dbname   = "db9078uu8gljrn"
+// )
 
-var schema = `
-CREATE DATABASE IF NOT EXISTS authenticator;
-
-CREATE SCHEMA IF NOT EXISTS
-
-CREATE TABLE IF NOT EXISTS user (
-	id bigint primary key,
-	name varchar(50),
-	surname varchar(50),
-	username varchar(50),
-	password varchar(500)
-);
-`
+const (
+	host     = "postgres"
+	port     = 5432
+	user     = "postres"
+	password = "password"
+	dbname   = "postgresgolang"
+)
 
 func main() {
-	db, err = sqlx.Connect("postgres", "user=postgres dbname=postgresgolang sslmode=disable")
+	// configuration := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s",
+	// 	host, port, user, password, dbname)
+	db, err := sql.Open("postgres", "postgresql://postgres:password@172.24.0.2:5432/postgresgolang?sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	db.MustExec(schema)
-
-	users := []User{}
-	tx := db.MustBegin()
-	tx.Select(&users, "SELECT * FROM user")
-	tx.Commit()
-	fmt.Println(users)
-
-}
-
-func (tx sqlx.Tx) close() {
+	err = db.Ping()
+	if err != nil {
+		fmt.Println("mammt")
+		log.Fatalln(err)
+	}
+	defer db.Close()
 
 }
